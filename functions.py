@@ -1,5 +1,5 @@
 #Look at app.py in book_database_project to see how to clean the CSV data & load it into the db
-from models import Base, session, engine
+from models import *
 
 import datetime
 import csv
@@ -56,32 +56,34 @@ def add_csv(input_file):
             data = csv.reader(csvfile)
             next(data) #skips header row
             for row in data:
-                # book_in_db = session.query(Book).filter(Book.title==row[0]).one_or_none()
-                # if book_in_db == None:
+                inventory_in_db = session.query(Product).filter(Product.product_name==row[0]).one_or_none()
+                if inventory_in_db == None:
                     product_name = row[0]
                     print(product_name)
-                    price = clean_price(row[1])
-                    print(price)
+                    product_price = clean_price(row[1])
+                    print(product_price)
                     product_quantity = int(row[2])
                     print(product_quantity)
                     date_updated = clean_date(row[3])
                     print(date_updated)
-                    # new_book = Book(title=title, author=author, published_date=date, price=price)
-                # session.add(new_book)
-            # session.commit()
-        # elif input_file == 'csv/brands.csv':
-        #     data = csv.reader(csvfile)
-        #     for row in data:
-        #         book_in_db = session.query(Book).filter(Book.title==row[0]).one_or_none()
-        #         if book_in_db == None:
-        #             title = row[0]
-        #             author = row[1]
-        #             date = clean_date(row[2])
-        #             price = clean_price(row[3])
-        #             new_book = Book(title=title, author=author, published_date=date, price=price)
-        #             session.add(new_book)
-        #     session.commit()
-
+                    query = session.query(Brands).filter(Brands.brand_name == row[4]).all()
+                    for info in query:
+                        brand_id = info.brand_id
+                    print(brand_id)
+                    new_product = Product(product_name=product_name, product_price=product_price, product_quantity=product_quantity, date_updated=date_updated, brand_id=brand_id)
+                session.add(new_product)
+            session.commit()
+        elif input_file == 'csv/brands.csv':
+            data = csv.reader(csvfile)
+            next(data) #skips header row
+            for row in data:
+                brand_in_db = session.query(Brands).filter(Brands.brand_name==row[0]).one_or_none()
+                if brand_in_db == None:
+                    brand_name = row[0]
+                    print(brand_name)
+                    new_brand = Brands(brand_name=brand_name)
+                    session.add(new_brand)
+            session.commit()
 
 
 add_csv('csv/inventory.csv')
