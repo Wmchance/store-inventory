@@ -85,18 +85,43 @@ def menu():
             \rPress enter to choose again
             ''')
 
+# add brand name instead of brand_id
 def get_product():
-    product_searched = input('What product would you like to see? ')
-    return(product_searched)
+    current_product_ids = []
+    for product_id_number in session.query(Product.product_id):
+        current_product_ids.append(product_id_number[0])
+    try:
+        product_searched = int(input('\nPlease enter the product ID number: '))
+        if product_searched in current_product_ids:
+            result = (session.query(Product).filter(Product.product_id == product_searched).all())[0]
+            product_brand = session.query(Brands.brand_name).filter(Brands.brand_id == result.brand_id).all()[0].brand_name
+            print(f'''
+                \nProduct details
+                \r***************\n
+                \rProduct name: {result.product_name}
+                \rProduct price: ${result.product_price/100}
+                \rNumber in stock: {result.product_quantity}
+                \rDate updated: {result.date_updated}
+                \rBrand of product: {product_brand}
+            ''')
+        else:
+            raise Exception
+    except Exception:
+        input('\nSelected product ID does not exist. \nPress enter to try another product ID')
+        get_product()
+    # return(product_searched)
 
 def app():
     app_running = True
     while app_running:
         choice = menu()
         if choice == 'V':
-            product_searched = get_product()
-            print(product_searched)
-        print(choice)
-        app_running = False
+            get_product()
+            input('\nPress any key to return to the main menu ')
+            app()
+        elif choice == 'E':
+            app_running = False
+    exit("\nSee you next time! \U0001f44b\n")
 
 
+app()

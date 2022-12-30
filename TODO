@@ -1,3 +1,4 @@
 How to handle multiple items with the same name - Ex. 'Sauce - Caesar Dressing' is in the CSV file twice (rows 3 & 22) but with different quantities & prices
 Update clean_price & clean_date error messages
-change CSV file path for add_csv so that they are in the main file
+add empty csv file or change csv file path for csv files into the main file
+add submenu after product search to allow user to return to main menu, perform a new search, or exit the app
