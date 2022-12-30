@@ -100,4 +100,3 @@ def app():
         app_running = False
 
 
-app()
