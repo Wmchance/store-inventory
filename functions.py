@@ -38,7 +38,7 @@ def clean_date(date_str):
 
 def add_csv(input_file):
     with open(input_file) as csvfile:
-        if input_file == 'inventory.csv':
+        if input_file == 'csv/inventory.csv':
             data = csv.reader(csvfile)
             next(data) #skips header row
             for row in data:
@@ -54,7 +54,7 @@ def add_csv(input_file):
                     new_product = Product(product_name=product_name, product_price=product_price, product_quantity=product_quantity, date_updated=date_updated, brand_id=brand_id)
                 session.add(new_product)
             session.commit()
-        elif input_file == 'brands.csv':
+        elif input_file == 'csv/brands.csv':
             data = csv.reader(csvfile)
             next(data) #skips header row
             for row in data:

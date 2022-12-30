@@ -3,4 +3,5 @@ __pycache__
 .vscode
 .DS_Store
 inventory.db
-*.csv
+csv/brands.csv
+csv/inventory.csv
