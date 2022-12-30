@@ -29,6 +29,3 @@ class Product(Base):
     def __repr__(self): 
         return f'<Product(product_id={self.product_id}, product_name={self.product_name}, product_quantity={self.product_quantity}, product_price={self.product_price}, date_updated={self.date_updated}, brand_id={self.brand_id})>'
 
-
-if __name__ == '__main__':
-    Base.metadata.create_all(engine)
