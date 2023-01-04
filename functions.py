@@ -3,6 +3,7 @@ from models import *
 
 import datetime
 import csv
+from datetime import date
 
 def clean_price(input_price):
     try:
@@ -35,6 +36,22 @@ def clean_date(date_str):
         return
     else: 
         return return_date
+
+def clean_quantity(given_quantity):
+    try:
+        cleaned_quantity = int(given_quantity)
+    except ValueError:
+        input('''
+        \n**** Quantity Error ****
+        \rThe quantity must be a whole number (Can't be fractions, decimals, or letters)
+        \rEx: 10, 456, etc...
+        \rPress Enter to enter a new quantity
+        \r********************
+        ''')
+        return
+    else:
+        return cleaned_quantity
+
 
 def add_csv(input_file):
     with open(input_file) as csvfile:
@@ -85,8 +102,7 @@ def menu():
             \rPress enter to choose again
             ''')
 
-# add brand name instead of brand_id
-def get_product():
+def view_product():
     current_product_ids = []
     for product_id_number in session.query(Product.product_id):
         current_product_ids.append(product_id_number[0])
@@ -108,16 +124,72 @@ def get_product():
             raise Exception
     except Exception:
         input('\nSelected product ID does not exist. \nPress enter to try another product ID')
-        get_product()
-    # return(product_searched)
+        view_product()
+
+def get_brand_id_from_brand_name():
+    current_brand_names = []
+    for products in session.query(Brands.brand_name):
+        current_brand_names.append(products[0])
+    print('\nCurrent brands:')
+    index_list = []
+    for index, brand in enumerate(current_brand_names, 1):
+        print(f'{index}. {brand}')
+        index_list.append(index)
+    try:
+        user_choice = int(input('\nSelect the brand by entering the corresponding number from the above list: '))
+        if user_choice not in index_list:
+            raise Exception
+    except:
+        input('''
+        \n**** Brand Error ****
+        \rThe entered value must be a number from the give list
+        \rPress enter to prick the brand again
+        \r**********************
+        ''')
+        return
+    else:
+        return user_choice
+
+def add_product():
+    print('''
+    \nAdd new product
+    \r***************\n''')
+    product_name = input('Enter product name: ')
+    quantity_error = True
+    while quantity_error:
+        product_quantity = clean_quantity(input('Enter the quantity of the product: '))
+        if type(product_quantity) == int:
+            quantity_error = False
+    price_error = True
+    while price_error:
+        product_price = clean_price('$'+input('Enter the price in dollars & cents (ex. 25.28): '))
+        if type(product_price) == int:
+            price_error = False
+    date_updated = today = date.today()
+    brand_id_error = True
+    while brand_id_error:
+        brand_id = get_brand_id_from_brand_name()
+        if type(brand_id) == int:
+            brand_id_error = False
+    print(product_name, product_price, product_quantity, date_updated, brand_id)
+    print(type(product_name), type(product_price), type(product_quantity), type(date_updated), type(brand_id))
+    # new_product = Product(product_name=product_name, product_price=product_price, product_quantity=product_quantity, date_updated=date_updated, brand_id=brand_id)
+    # session.add(new_product)
+    # session.commit()
 
 def app():
     app_running = True
     while app_running:
         choice = menu()
         if choice == 'V':
-            get_product()
+            view_product()
+            #Todo: Set input to uppercase 
             input('\nPress any key to return to the main menu ')
+            app()
+        elif choice == 'N':
+            add_product()
+            #Todo: Set input to uppercase 
+            input('\nProduct added. \rPress any key to return to the main menu ')
             app()
         elif choice == 'E':
             app_running = False
