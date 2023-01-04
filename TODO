@@ -2,3 +2,5 @@ How to handle multiple items with the same name(from csv or user entered product
 Update clean_price & clean_date error messages
 add empty csv file or change csv file path for csv files into the main file
 add submenu after product search to allow user to return to main menu, perform a new search, or exit the app
+can .all() be replaced with .first() to prevent getting & having to sort throw an obj?
+look into using foreign keys instead of searching throw the other table

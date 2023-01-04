@@ -171,11 +171,15 @@ def add_product():
         brand_id = get_brand_id_from_brand_name()
         if type(brand_id) == int:
             brand_id_error = False
-    print(product_name, product_price, product_quantity, date_updated, brand_id)
-    print(type(product_name), type(product_price), type(product_quantity), type(date_updated), type(brand_id))
-    # new_product = Product(product_name=product_name, product_price=product_price, product_quantity=product_quantity, date_updated=date_updated, brand_id=brand_id)
-    # session.add(new_product)
-    # session.commit()
+    product_in_db = session.query(Product).filter(Product.product_name == product_name).first()
+    if product_in_db == None:
+        new_product = Product(product_name=product_name, product_price=product_price, product_quantity=product_quantity, date_updated=date_updated, brand_id=brand_id)
+        session.add(new_product)
+    else:
+        product_in_db.product_price=product_price
+        product_in_db.product_quantity=product_quantity
+        product_in_db.date_updated=date_updated
+    session.commit()
 
 def app():
     app_running = True
@@ -189,11 +193,15 @@ def app():
         elif choice == 'N':
             add_product()
             #Todo: Set input to uppercase 
-            input('\nProduct added. \rPress any key to return to the main menu ')
+            input('\nProduct added. \nPress any key to return to the main menu ')
             app()
         elif choice == 'E':
             app_running = False
     exit("\nSee you next time! \U0001f44b\n")
 
+def update_practice():
+    current_product = session.query(Product).filter(Product.product_id == 1).first()
+    current_product.product_quantity = 97
+    session.commit()
 
 app()
