@@ -86,7 +86,8 @@ def add_csv(input_file):
 def menu():
     while True:
         print('''
-            \nStore Inventory Menu\n
+            \nStore Inventory Menu
+            \r********************\n
             \rV. See details of a product
             \rN. Add a new product
             \rA. See an analysis of all products
@@ -181,6 +182,21 @@ def add_product():
         product_in_db.date_updated=date_updated
     session.commit()
 
+def find_most_expensive_item():
+    ordered_products = session.query(Product.product_name, Product.product_price).order_by(Product.product_price.desc()).all()
+    return ordered_products[0]
+
+def find_least_expensive_item():
+    ordered_products = session.query(Product.product_name, Product.product_price).order_by(Product.product_price.asc()).all()
+    return ordered_products[0]
+
+# https://docs.sqlalchemy.org/en/14/core/tutorial.html
+def count_brand_with_most_products():
+    max_products_brand_info = (session.query(Product.brand_id, func.count(Product.brand_id).label('max_num')).group_by(Product.brand_id).order_by(desc('max_num')).all())[0]
+    max_products_brand = session.query(Brands.brand_name).filter(Brands.brand_id == max_products_brand_info.brand_id).first()[0]
+    max_product_info = [max_products_brand, max_products_brand_info.max_num]
+    return max_product_info
+
 def app():
     app_running = True
     while app_running:
@@ -189,19 +205,21 @@ def app():
             view_product()
             #Todo: Set input to uppercase 
             input('\nPress any key to return to the main menu ')
-            app()
         elif choice == 'N':
             add_product()
             #Todo: Set input to uppercase 
             input('\nProduct added. \nPress any key to return to the main menu ')
-            app()
+        elif choice == 'A':
+            print(f'''
+            \nInventory Analysis
+            \r******************\n
+            \rMost Expensive Item: {find_most_expensive_item().product_name} - ${(find_most_expensive_item().product_price)/100}
+            \rLeast Expensive Item: {find_least_expensive_item().product_name} - ${(find_least_expensive_item().product_price)/100}
+            \rBrand with Most Products: {count_brand_with_most_products()[0]} - {count_brand_with_most_products()[1]} products
+            ''')
+            input('\nPress any key to return to the main menu ')
         elif choice == 'E':
             app_running = False
     exit("\nSee you next time! \U0001f44b\n")
-
-def update_practice():
-    current_product = session.query(Product).filter(Product.product_id == 1).first()
-    current_product.product_quantity = 97
-    session.commit()
 
 app()
