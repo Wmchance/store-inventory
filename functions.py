@@ -29,8 +29,8 @@ def clean_date(date_str):
     except ValueError:
         input('''
         \n**** Date Error ****
-        \rThe date format should be: MONTH DD, YYYY & in the past
-        \rEx: March 22, 1965
+        \rThe date format should be: MM/DD/YYYY & in the past
+        \rEx: 03/22/1965
         \rPress Enter to try again
         \r********************''')
         return
@@ -196,6 +196,22 @@ def count_brand_with_most_products():
     max_products_brand = session.query(Brands.brand_name).filter(Brands.brand_id == max_products_brand_info.brand_id).first()[0]
     max_product_info = [max_products_brand, max_products_brand_info.max_num]
     return max_product_info
+    
+def backup_dbs_to_csv():
+    with open('backup_inventory.csv', 'w', newline='') as inventory_csv:
+        fieldnames = Product.__table__.columns.keys()
+        writer = csv.DictWriter(inventory_csv, fieldnames=fieldnames)
+        writer.writeheader()
+        inventory_db = session.query(Product)
+        for row in inventory_db:
+            writer.writerow({
+                fieldnames[0]: row.product_id, 
+                fieldnames[1]: row.product_name, 
+                fieldnames[2]: row.product_quantity, 
+                fieldnames[3]: '$'+str(row.product_price/100), 
+                fieldnames[4]: f'{str(row.date_updated.month)}/{str(row.date_updated.day)}/{str(row.date_updated.year)}', 
+                fieldnames[5]: session.query(Brands.brand_name).filter(Brands.brand_id == row.brand_id).first()[0]
+                })
 
 def app():
     app_running = True
@@ -222,4 +238,4 @@ def app():
             app_running = False
     exit("\nSee you next time! \U0001f44b\n")
 
-app()
+backup_dbs_to_csv()

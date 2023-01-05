@@ -5,3 +5,4 @@ __pycache__
 inventory.db
 csv/brands.csv
 csv/inventory.csv
+backup_inventory.csv
