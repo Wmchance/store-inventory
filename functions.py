@@ -246,8 +246,14 @@ def app():
             \rBrand with Most Products: {count_brand_with_most_products()[0]} - {count_brand_with_most_products()[1]} products
             ''')
             input('\nPress any key to return to the main menu ')
+        elif choice == 'B':
+            backup_dbs_to_csv()
+            input('''
+            \nBackups have been created & stored as the below filenames:
+            \r'backup_inventory.csv' & 'backup_brands.csv'
+            \nPress enter to return to the main menu''')
         elif choice == 'E':
             app_running = False
     exit("\nSee you next time! \U0001f44b\n")
 
-backup_dbs_to_csv()
+app()
