@@ -52,7 +52,6 @@ def clean_quantity(given_quantity):
     else:
         return cleaned_quantity
 
-
 def add_csv(input_file):
     with open(input_file) as csvfile:
         if input_file == 'csv/inventory.csv':
@@ -255,5 +254,3 @@ def app():
         elif choice == 'E':
             app_running = False
     exit("\nSee you next time! \U0001f44b\n")
-
-app()

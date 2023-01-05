@@ -6,3 +6,4 @@ if __name__ == '__main__':
 
     add_csv('csv/brands.csv')
     add_csv('csv/inventory.csv')
+    app()
