@@ -213,6 +213,18 @@ def backup_dbs_to_csv():
                 fieldnames[5]: session.query(Brands.brand_name).filter(Brands.brand_id == row.brand_id).first()[0]
                 })
 
+    with open('backup_brands.csv', 'w', newline='') as brands_csv:
+        fieldnames = Brands.__table__.columns.keys()
+        writer = csv.DictWriter(brands_csv, fieldnames=fieldnames)
+        writer.writeheader()
+        brands_db = session.query(Brands)
+        for row in brands_db:
+            writer.writerow({
+                fieldnames[0]: row.brand_id, 
+                fieldnames[1]: row.brand_name
+                })
+
+
 def app():
     app_running = True
     while app_running:
