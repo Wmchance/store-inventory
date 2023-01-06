@@ -59,17 +59,24 @@ def add_csv(input_file):
             data = csv.reader(csvfile)
             next(data) #skips header row
             for row in data:
+                product_name = row[0]
+                product_price = clean_price(row[1])
+                product_quantity = int(row[2])
+                date_updated = clean_date(row[3])
+                query = session.query(Brands).filter(Brands.brand_name == row[4]).all()
+                for info in query:
+                    brand_id = info.brand_id
+                new_product = Product(product_name=product_name, product_price=product_price, product_quantity=product_quantity, date_updated=date_updated, brand_id=brand_id)
                 inventory_in_db = session.query(Product).filter(Product.product_name==row[0]).one_or_none()
                 if inventory_in_db == None:
-                    product_name = row[0]
-                    product_price = clean_price(row[1])
-                    product_quantity = int(row[2])
-                    date_updated = clean_date(row[3])
-                    query = session.query(Brands).filter(Brands.brand_name == row[4]).all()
-                    for info in query:
-                        brand_id = info.brand_id
-                    new_product = Product(product_name=product_name, product_price=product_price, product_quantity=product_quantity, date_updated=date_updated, brand_id=brand_id)
                     session.add(new_product)
+                else:
+                    first_instance = session.query(Product).filter(Product.product_name==row[0]).first()
+                    if first_instance.date_updated < date_updated:
+                        first_instance.product_price = product_price
+                        first_instance.product_quantity = product_quantity
+                        first_instance.date_updated = date_updated
+                        first_instance.brand_id = brand_id
             session.commit()
         elif input_file == 'csv/brands.csv':
             data = csv.reader(csvfile)
@@ -328,5 +335,3 @@ def app():
             app_running = False
     exit("\nSee you next time! \U0001f44b\n")
 
-
-app()
