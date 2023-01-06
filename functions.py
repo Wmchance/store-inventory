@@ -132,7 +132,6 @@ def view_product():
             raise Exception
     except Exception:
         input('\nSelected product ID does not exist. \nPress enter to try another product ID')
-        view_product()
 
 def get_brand_id_from_brand_name():
     current_brand_names = []
@@ -300,7 +299,11 @@ def app():
     while app_running:
         choice = menu()
         if choice == 'V' or choice == 'v':
-            searched_product_id = view_product()
+            searched_product_id_error = True
+            while searched_product_id_error:
+                searched_product_id = view_product()
+                if type(searched_product_id) == int:
+                    searched_product_id_error = False
             product_sub_choice = view_product_submenu()
             if product_sub_choice == 'E':
                 print('''
@@ -334,4 +337,3 @@ def app():
         elif choice == 'E' or choice == 'e':
             app_running = False
     exit("\nSee you next time! \U0001f44b\n")
-
