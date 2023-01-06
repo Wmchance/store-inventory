@@ -120,6 +120,7 @@ def view_product():
                 \rDate updated: {result.date_updated}
                 \rBrand of product: {product_brand}
             ''')
+            return product_searched
         else:
             raise Exception
     except Exception:
@@ -179,6 +180,55 @@ def add_product():
         product_in_db.product_quantity=product_quantity
         product_in_db.date_updated=date_updated
     session.commit()
+
+def edit_product(product_id_searched):
+    current_product = session.query(Product).filter(Product.product_id == product_id_searched).first()
+    product_name = input('Enter product name: ')
+    quantity_error = True
+    while quantity_error:
+        product_quantity = clean_quantity(input('Enter the quantity of the product: '))
+        if type(product_quantity) == int:
+            quantity_error = False
+    price_error = True
+    while price_error:
+        product_price = clean_price('$'+input('Enter the price in dollars & cents (ex. 25.28): '))
+        if type(product_price) == int:
+            price_error = False
+    date_updated = today = date.today()
+    brand_id_error = True
+    while brand_id_error:
+        brand_id = get_brand_id_from_brand_name()
+        if type(brand_id) == int:
+            brand_id_error = False
+
+    current_product.product_name = product_name
+    current_product.product_quantity = product_quantity
+    current_product.product_price = product_price
+    current_product.date_updated = date_updated
+    current_product.brand_id = brand_id
+    session.commit()
+
+def delete_product(product_id_searched):
+    product_to_delete = session.query(Product).filter(Product.product_id == product_id_searched).first()
+    session.delete(product_to_delete)
+    session.commit()
+
+def view_product_submenu():
+    while True:
+        print('''
+            \nProduct Menu
+            \r********************\n
+            \rE. Edit the product information
+            \rD. Delete product from the database
+            \rR. Return to main menu
+            ''')
+        choice = input('What would you like to do? ')
+        if choice in ['E', 'D', 'R']:
+            return choice
+        else:
+            input('''
+            \rPlease choose one of the options above
+            \rPress enter to choose again ''')
 
 def find_most_expensive_item():
     ordered_products = session.query(Product.product_name, Product.product_price).order_by(Product.product_price.desc()).all()
@@ -243,8 +293,17 @@ def app():
     while app_running:
         choice = menu()
         if choice == 'V' or choice == 'v':
-            view_product()
-            input('\nPress any key to return to the main menu ')
+            searched_product_id = view_product()
+            product_sub_choice = view_product_submenu()
+            if product_sub_choice == 'E':
+                print('''
+                \nEdit product
+                \r************\n''')
+                edit_product(searched_product_id)
+                input('\nProduct updated \nPress any key to return to the main menu ')
+            elif product_sub_choice == 'D':
+                delete_product(searched_product_id)
+                input('\nProduct deleted \nPress any key to return to the main menu ')
         elif choice == 'N' or choice == 'n':
             add_product()
             input('\nProduct added. \nPress any key to return to the main menu ')
