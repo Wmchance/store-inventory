@@ -68,7 +68,7 @@ def add_csv(input_file):
                     for info in query:
                         brand_id = info.brand_id
                     new_product = Product(product_name=product_name, product_price=product_price, product_quantity=product_quantity, date_updated=date_updated, brand_id=brand_id)
-                session.add(new_product)
+                    session.add(new_product)
             session.commit()
         elif input_file == 'csv/brands.csv':
             data = csv.reader(csvfile)
