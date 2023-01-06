@@ -15,7 +15,7 @@ def clean_price(input_price):
         \rThe date format should only include: dollars & cents separated with a period
         \rEx: 24.56
         \rPress Enter to try again
-        \r********************''')
+        \r******************** \n''')
         return
     else:
         return int(price_float * 100)  
@@ -29,10 +29,10 @@ def clean_date(date_str):
     except ValueError:
         input('''
         \n**** Date Error ****
-        \rThe date format should be: MM/DD/YYYY & in the past
+        \rThe date format should be: MM/DD/YYYY
         \rEx: 03/22/1965
         \rPress Enter to try again
-        \r********************''')
+        \r******************** \n''')
         return
     else: 
         return return_date
@@ -46,8 +46,7 @@ def clean_quantity(given_quantity):
         \rThe quantity must be a whole number (Can't be fractions, decimals, or letters)
         \rEx: 10, 456, etc...
         \rPress Enter to enter a new quantity
-        \r********************
-        ''')
+        \r************************ \n''')
         return
     else:
         return cleaned_quantity
@@ -87,20 +86,19 @@ def menu():
         print('''
             \nStore Inventory Menu
             \r********************\n
-            \rV. See details of a product
-            \rN. Add a new product
-            \rA. See an analysis of all products
-            \rB. Backup the database as a CSV file
+            \rV. View a single product's inventory
+            \rN. Add a new product to the database
+            \rA. View an analysis
+            \rB. Make a backup of the entire inventory
             \rE. Exit
             ''')
         choice = input('What would you like to do? ')
-        if choice in ['V', 'N', 'A', 'B', 'E']:
+        if choice in ['V', 'v', 'N', 'n', 'A', 'a', 'B', 'b', 'E', 'e']:
             return choice
         else:
             input('''
             \rPlease choose one of the options above
-            \rPress enter to choose again
-            ''')
+            \rPress enter to choose again ''')
 
 def view_product():
     current_product_ids = []
@@ -144,8 +142,7 @@ def get_brand_id_from_brand_name():
         \n**** Brand Error ****
         \rThe entered value must be a number from the give list
         \rPress enter to prick the brand again
-        \r**********************
-        ''')
+        \r********************** ''')
         return
     else:
         return user_choice
@@ -228,15 +225,13 @@ def app():
     app_running = True
     while app_running:
         choice = menu()
-        if choice == 'V':
+        if choice == 'V' or choice == 'v':
             view_product()
-            #Todo: Set input to uppercase 
             input('\nPress any key to return to the main menu ')
-        elif choice == 'N':
+        elif choice == 'N' or choice == 'n':
             add_product()
-            #Todo: Set input to uppercase 
             input('\nProduct added. \nPress any key to return to the main menu ')
-        elif choice == 'A':
+        elif choice == 'A' or choice == 'a':
             print(f'''
             \nInventory Analysis
             \r******************\n
@@ -245,12 +240,12 @@ def app():
             \rBrand with Most Products: {count_brand_with_most_products()[0]} - {count_brand_with_most_products()[1]} products
             ''')
             input('\nPress any key to return to the main menu ')
-        elif choice == 'B':
+        elif choice == 'B' or choice == 'b':
             backup_dbs_to_csv()
             input('''
             \nBackups have been created & stored as the below filenames:
             \r'backup_inventory.csv' & 'backup_brands.csv'
             \nPress enter to return to the main menu''')
-        elif choice == 'E':
+        elif choice == 'E' or choice == 'e':
             app_running = False
     exit("\nSee you next time! \U0001f44b\n")
