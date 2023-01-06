@@ -5,6 +5,8 @@ import datetime
 import csv
 from datetime import date
 
+import statistics
+
 def clean_price(input_price):
     try:
         price_split = input_price.split('$')
