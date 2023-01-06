@@ -192,6 +192,21 @@ def count_brand_with_most_products():
     max_products_brand = session.query(Brands.brand_name).filter(Brands.brand_id == max_products_brand_info.brand_id).first()[0]
     max_product_info = [max_products_brand, max_products_brand_info.max_num]
     return max_product_info
+
+def avg_price_of_inventory():
+    all_prices_tuple = session.query(Product.product_price).all()
+    all_prices_list = []
+    for price in all_prices_tuple:
+        all_prices_list.append(price[0])
+    avg_product_price = (round((statistics.mean(all_prices_list))/100, 2))
+    return avg_product_price
+
+def num_of_products_under_five_dollars():
+    products_query = session.query(Product.product_name).filter(Product.product_price < 500).all()
+    product_list = []
+    for product in products_query:
+        product_list.append(product[0])
+    return (len(product_list))
     
 def backup_dbs_to_csv():
     with open('backup_inventory.csv', 'w', newline='') as inventory_csv:
@@ -238,6 +253,8 @@ def app():
             \rMost Expensive Item: {find_most_expensive_item().product_name} - ${(find_most_expensive_item().product_price)/100}
             \rLeast Expensive Item: {find_least_expensive_item().product_name} - ${(find_least_expensive_item().product_price)/100}
             \rBrand with Most Products: {count_brand_with_most_products()[0]} - {count_brand_with_most_products()[1]} products
+            \rAverage Product Price: ${avg_price_of_inventory()}
+            \rNumber of products under $5: {num_of_products_under_five_dollars()}
             ''')
             input('\nPress any key to return to the main menu ')
         elif choice == 'B' or choice == 'b':
@@ -249,3 +266,6 @@ def app():
         elif choice == 'E' or choice == 'e':
             app_running = False
     exit("\nSee you next time! \U0001f44b\n")
+
+
+app()
