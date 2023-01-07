@@ -268,29 +268,27 @@ def num_of_products_under_five_dollars():
     
 def backup_dbs_to_csv():
     with open('backup_inventory.csv', 'w', newline='') as inventory_csv:
-        fieldnames = Product.__table__.columns.keys()
+        fieldnames = ['product_name','product_price','product_quantity','date_updated','brand_name']
         writer = csv.DictWriter(inventory_csv, fieldnames=fieldnames)
         writer.writeheader()
         inventory_db = session.query(Product)
         for row in inventory_db:
             writer.writerow({
-                fieldnames[0]: row.product_id, 
-                fieldnames[1]: row.product_name, 
+                fieldnames[0]: row.product_name, 
+                fieldnames[1]: '$'+str(row.product_price/100), 
                 fieldnames[2]: row.product_quantity, 
-                fieldnames[3]: '$'+str(row.product_price/100), 
-                fieldnames[4]: f'{str(row.date_updated.month)}/{str(row.date_updated.day)}/{str(row.date_updated.year)}', 
-                fieldnames[5]: session.query(Brands.brand_name).filter(Brands.brand_id == row.brand_id).first()[0]
+                fieldnames[3]: f'{str(row.date_updated.month)}/{str(row.date_updated.day)}/{str(row.date_updated.year)}', 
+                fieldnames[4]: session.query(Brands.brand_name).filter(Brands.brand_id == row.brand_id).first()[0]
                 })
 
     with open('backup_brands.csv', 'w', newline='') as brands_csv:
-        fieldnames = Brands.__table__.columns.keys()
+        fieldnames = ['brand_name']
         writer = csv.DictWriter(brands_csv, fieldnames=fieldnames)
         writer.writeheader()
         brands_db = session.query(Brands)
         for row in brands_db:
             writer.writerow({
-                fieldnames[0]: row.brand_id, 
-                fieldnames[1]: row.brand_name
+                fieldnames[0]: row.brand_name
                 })
 
 
